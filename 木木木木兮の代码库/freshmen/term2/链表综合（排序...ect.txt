@@ -1,0 +1,115 @@
+#include<stdio.h>	
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+typedef struct _node {
+	int input;
+	struct _node *next;
+	struct _node *prev;	
+}node;
+typedef struct _list{
+	node *head;
+	node *tail;
+}List;
+void add(List *list,int input){
+	node *p;
+	p=(node *)malloc(sizeof(node));
+	p->input=input;
+	p->next=NULL;
+	p->prev=NULL;
+	if(list->head==NULL){
+		list->head=p;
+		list->tail=p;
+	}
+	else{
+		list->tail->next=p;
+		p->prev=list->tail;
+		list->tail=p;
+	}
+}
+void valuedelete(List *list,int input){
+	node *p;
+	p=NULL;
+	for(p=list->head;p;p=p->next){
+		if(p->input==input){
+			break;
+		}
+	}
+	if(p){
+		if(p==list->head){
+			list->head=p->next;
+			p->next->prev=NULL;
+		}
+		else if(p==list->tail){
+			list->tail=p->prev;
+			p->prev->next=NULL;
+		}
+		else{
+			p->prev->next=p->next;
+			p->next->prev=p->prev;
+		}
+		free(p);
+	}
+	else{
+		printf("error");
+	}
+}
+void swap(node *p,node *q){
+	int bottle=p->input;
+	p->input=q->input;
+	q->input=bottle;
+}
+void range(List *list){
+	node *p;
+	node *q;
+	for(p=list->head;p;p=p->next){
+		for(q=p;q&&q->prev;q=q->prev){
+			if(q->prev->input>q->input){
+				swap(q->prev,q);
+			}
+		}
+	}
+}
+void wholeprint(List *list){
+	node *p;
+	for(p=list->head;p;p=p->next){
+		printf("%d ",p->input);
+	}
+	printf("\n");
+}
+int main(){
+	int input;
+	List list;
+	list.head=NULL;
+	list.tail=NULL;
+	while(scanf("%d",&input)!=EOF){
+		add(&list,input);
+	}
+	//int type;
+	//scanf("%d",&type);
+	wholeprint(&list);
+	range(&list);
+	wholeprint(&list);
+//	while(type!=-1){
+//		scanf("%d",&input);
+//		if(type==1){
+//			add(&list,input);
+//		}
+//		else{
+//			valuedelete(&list,input);
+//		}
+//		scanf("%d",&type);
+//		range(&list);
+//		wholeprint(&list);
+//	}
+	return 0;
+}

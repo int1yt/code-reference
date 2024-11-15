@@ -1,0 +1,269 @@
+#include<stdio.h>	
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+typedef struct _node {
+    int number;
+    char sig;
+    int type;
+    struct _node *next;
+    struct _node *prev;
+}node;
+typedef struct _list{
+    node *head;
+    node *tail;
+}List;
+void addnum(List *list,int input){
+    node *p;
+    p=(node *)malloc(sizeof(node));
+    p->number=input;
+    p->next=NULL;
+    p->prev=NULL;
+    p->type=1;
+    if(list->head==NULL){
+        list->head=p;
+        list->tail=p;
+    }
+    else{
+        list->tail->next=p;
+        p->prev=list->tail;
+        list->tail=p;
+    }
+}
+void addchar(List *list,char input){
+    node *p;
+    p=(node *)malloc(sizeof(node));
+    p->sig=input;
+    p->next=NULL;
+    p->prev=NULL;
+    p->type=0;
+    if(list->head==NULL){
+        list->head=p;
+        list->tail=p;
+    }
+    else{
+        list->tail->next=p;
+        p->prev=list->tail;
+        list->tail=p;
+    }
+}
+typedef struct _stack{
+    char sig;
+    int num;
+    struct _stack *next;
+    struct _stack *prev;
+}nodestack;
+typedef struct _stacklist{
+    nodestack *head;
+    nodestack *tail;
+}nodelist;
+void push(nodelist *list,char input){
+    nodestack *p;
+    p=(nodestack *)malloc(sizeof(nodestack));
+    p->next=NULL;
+    p->prev=NULL;
+    p->sig=input;
+    if(list->head==NULL){
+        list->head=p;
+        list->tail=p;
+    }
+    else{
+        list->tail->next=p;
+        p->prev=list->tail;
+        list->tail=p;
+    }
+}
+void pushnum(nodelist *list,int input){
+    nodestack *p;
+    p=(nodestack *)malloc(sizeof(nodestack));
+    p->next=NULL;
+    p->prev=NULL;
+    p->num=input;
+    if(list->head==NULL){
+        list->head=p;
+        list->tail=p;
+    }
+    else{
+        list->tail->next=p;
+        p->prev=list->tail;
+        list->tail=p;
+    }
+}
+int judge(char input){
+    if(input=='*'||input=='/'){
+        return 2;
+    }
+    else if(input=='+'||input=='-'){
+        return 1;
+    }
+    else if(input=='('){
+        return 0;
+    }
+}
+void initchange(nodelist *stack,List *list){
+    char input;
+    int final=0;
+    while((input=getchar())!=EOF){
+        if((!(input>='0'&&input<='9'))&&final!=0){
+            addnum(list,final);
+            //printf("%lf",final);
+            final=0;
+        }
+      if(input=='='){
+      		nodestack *q;
+      		q=stack->tail;
+      		while(q){
+			 	addchar(list,q->sig);
+			 	q=q->prev;
+			 }
+            break;
+        }
+        else if(input==' '){
+            continue;
+        }
+        else{
+            if(input>='0'&&input<='9'){
+                final=final*10+(int)(input-'0');
+            }
+            else{
+                if(input!=')'){
+                    nodestack *p,*bot;
+                    p=stack->tail;
+                    if(p){
+                    	while((judge(input)<=judge(p->sig))&&input!='('){
+                            addchar(list,p->sig);
+							if(p==stack->head){
+								stack->head->next=NULL;
+								stack->tail->prev=NULL; 
+								stack->head=NULL;
+								stack->tail=NULL;
+								free(p);
+								break;
+							}
+							else{
+								bot=p->prev;
+								free(p);
+								bot->next=NULL;
+								p=bot; 	
+								stack->tail=p;
+							}
+                    	}
+					}
+                    push(stack,input);
+                }
+                else{
+                    nodestack *t,*circle,*bottle;
+                    for(t=stack->tail;;t=t->prev){
+                        if(t->sig=='('){
+                                break;
+                            }
+                        }//find '('
+                    for(circle=stack->tail;circle!=t;circle=bottle){
+                        bottle=circle->prev;
+                        addchar(list,circle->sig);
+                        //printf("%c",circle->sig);
+                        free(circle);
+                        bottle->next=NULL;
+                        stack->tail=bottle;
+                    }
+                    if(t==stack->head){
+                    	stack->head=NULL;
+                    	stack->tail=NULL;
+                    	free(t);
+					} 
+					else{
+						bottle=circle->prev;
+                        free(circle);
+                        bottle->next=NULL;
+                        stack->tail=bottle; 
+					}
+
+                }
+            }
+        }
+    }
+}
+void wholeprint(List *list){
+    node *p;
+    for(p=list->head;p;p=p->next){
+        if(p->type==1){
+            printf("%d ",p->number);
+        }
+        else{
+            printf("%c ",p->sig);
+        }
+    }
+    printf("\n");
+}
+int work(List *list,nodelist *stack){
+    node *p;
+    nodestack *fir,*sec;
+    int mid=0;
+    p=list->head;
+    if(p==NULL){
+    	return 0;
+	}
+    while(p){
+        if(p->type==1){
+            pushnum(stack,p->number);
+        }
+        else{
+            fir=stack->tail;
+            sec=stack->tail->prev;
+            if(p->sig=='+'){
+                mid=fir->num+sec->num;
+            }
+            else if(p->sig=='-'){
+                mid=sec->num-fir->num;
+            }
+            else if(p->sig=='*'){
+                mid=(fir->num)*(sec->num);
+            }
+            else{
+                mid=sec->num/fir->num;
+            }
+        
+            stack->tail=sec;
+            sec->num=mid;
+            sec->next=NULL;
+            free(fir);
+			}
+    	p=p->next;
+    }
+    return stack->tail->num;
+}
+int main(){
+    List listbase;
+    listbase.head=NULL;
+    listbase.tail=NULL;
+    nodelist stack1;
+    stack1.head=NULL;
+    stack1.tail=NULL;
+    nodelist stack2;
+    stack2.head=NULL;
+    stack2.tail=NULL;
+    initchange(&stack1,&listbase);
+    //wholeprint(&listbase);
+    int final;
+    node *p;
+    int cnt=0;
+    for(p=listbase.tail;p&&cnt<3;p=p->prev){
+    	if(p->sig=='+'||p->sig=='-'||p->sig=='*'||p->sig=='/'){
+    		printf("%c",p->sig);
+    		cnt++;
+		}
+	}
+	printf("\n");
+    final=work(&listbase,&stack2);
+    printf("%d",final);
+    return 0;
+}

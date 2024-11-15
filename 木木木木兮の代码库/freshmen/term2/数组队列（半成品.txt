@@ -1,0 +1,49 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20
+#define MAXSTACK 1000
+#define number 5
+const double pi = acos(-1.0);
+int queue[number]={0};
+int front =-1;
+int rear =-1;
+void pushq(int input){
+    rear=(rear+1)%number;
+    if(rear==front){
+        printf("the queue is full\n");
+    }
+    else{
+        queue[rear]=input;
+    }
+}
+int popq(){
+    if(front==rear){
+        printf("the queue is empty\n");
+    }
+    else{
+        front=(front+1)%number;
+        return queue[rear];
+    }
+}
+int main(){
+    int input;
+    while(scanf("%d",&input)!=EOF){
+        
+            pushq(input);
+        
+    };
+    for(int i=front;i<=rear;i=(i+1)%number){
+        printf("%d ",queue[i]);
+    }
+    return 0;
+}

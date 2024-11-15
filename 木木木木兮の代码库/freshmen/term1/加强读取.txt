@@ -1,0 +1,12 @@
+char *get_value(char *s,double *d){
+    while(*s!='\0'&&isspace(*s)){
+        s++://跳过空格
+    }
+    if(sscanf(s,"%lf",d)!=1){
+        return NULL;
+    }
+    while(*s!='\0'&&isspace(*s)){
+        s++;
+    }//移至空白位
+    return s;
+}

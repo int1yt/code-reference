@@ -1,0 +1,12 @@
+void bubble(int *a,int length){
+	ll int bottle;
+	for(int i=0;i<length;i++){
+		for(int j=i;j<length;j++){
+			if(a[i]<a[j]){
+				bottle=a[i];
+				a[i]=a[j];
+				a[j]=bottle;
+			}
+		}
+	}
+}

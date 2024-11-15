@@ -1,0 +1,76 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20
+#define MAXSTACK 1000
+const double pi = acos(-1.0);
+typedef struct _node{
+    int value;
+    _node *next;
+}stack_node;
+typedef struct _link{
+    stack_node *head;
+    stack_node *tail;
+}stack_link;
+int isempty(stack_link *link){
+    if(link->tail){
+        return 1;
+    }
+    else{
+        return -1;
+    }
+}
+void push(stack_link *link,int input){
+    stack_node *p=(stack_node *)malloc(sizeof(stack_node));
+    p->value=input;
+    if(isempty(link)){
+        p->next=link->tail;
+        link->tail=p;
+    }
+    else{
+        p->next=NULL;
+        link->head=p;
+        link->tail=p;
+      }
+}
+int pop(stack_link *link){
+    stack_node *output;
+    int value;
+    if(link->tail){
+        output=(link->tail);
+        link->tail=(link->tail)->next;
+        value=output->value;
+        free(output);
+        return value;
+    }
+    else{
+        return -1;
+    }
+}
+int main(){
+    stack_link link;
+    link.head=NULL;
+    link.tail=NULL;
+    int input;
+    do{
+        scanf("%d",&input);
+        if(input!=-1){
+            push(&link,input);
+        }
+    }while(input!=-1);
+    int out;
+    while((out=pop(&link))!=-1){
+        printf("%d\n",out);
+    }
+    return 0;
+}
+

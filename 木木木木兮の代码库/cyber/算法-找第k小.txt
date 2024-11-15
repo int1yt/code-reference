@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <malloc.h>
+int cmpfunc(const void *a, const void *b)
+{
+    return (*(int *)a - *(int *)b);
+}
+int find_mid(int *input, int length)
+{
+    if (length <= 5)
+    {
+        qsort(input, length, sizeof(int), cmpfunc);
+        return input[length / 2];
+    }
+    int len = length / 5 + 1;
+    int *save;
+    save = (int *)malloc(len * sizeof(int));
+    int rec[5];
+    int cnt = 0;
+    for (int i = 0; i < len; i++)
+    {
+        int j = 0;
+        for (j = 0; j < 5; j++)
+        {
+            if (i * 5 + j >= length)
+            {
+                break;
+            }
+            rec[j] = input[i * 5 + j];
+        }
+        qsort(rec, j + 1, sizeof(int), cmpfunc);
+        save[cnt++] = rec[j / 2];
+    }
+    return find_mid(save, cnt);
+}
+void init(int *input, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        scanf("%d", &input[i]);
+    }
+}
+int find_kmin(int *input, int length, int k)
+{
+    if (length <= 5)
+    {
+        qsort(input, length, sizeof(int), cmpfunc);
+        return input[k - 1];
+    }
+    int mid = find_mid(input, length);
+    // printf("%d ",mid);
+    int cnt = 0;
+    for (int i = 0; i < length; i++)
+    {
+        if (input[i] > mid)
+        {
+            cnt++;
+        }
+    }
+    if (length - cnt == k)
+    {
+        return mid;
+    }
+    else if (length - cnt > k)
+    {
+        int *bottle;
+        bottle = (int *)malloc((length - cnt - 1) * sizeof(int));
+        int in = 0;
+        for (int t = 0; t < length; t++)
+        {
+            if (input[t] < mid)
+            {
+                bottle[in++] = input[t];
+            }
+        }
+        return find_kmin(bottle, length - cnt - 1, k);
+    }
+    else
+    {
+        int *bottle;
+        bottle = (int *)malloc((cnt) * sizeof(int));
+        int in = 0;
+        for (int t = 0; t < length; t++)
+        {
+            if (input[t] > mid)
+            {
+                bottle[in++] = input[t];
+            }
+        }
+        return find_kmin(bottle, cnt, k - length + cnt);
+    }
+}
+int main()
+{
+    int length;
+    scanf("%d", &length);
+    int *input;
+    input = (int *)malloc(length * sizeof(int));
+    init(input, length);
+    int k;
+    while (scanf("%d", &k))
+    {
+        printf("%d\n", find_kmin(input, length, k));
+    }
+    return 0;
+}

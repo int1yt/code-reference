@@ -1,0 +1,9 @@
+//前缀和
+void sumup(int *input,int length){
+    ll int sum=0;
+    for(int i=0;i<length;i++){
+        sum+=input[i];
+        input[i]=sum;
+    }
+    return ;
+}

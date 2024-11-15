@@ -1,0 +1,15 @@
+//选择排序
+//即选取min放在first
+//引用了swap
+void selectrange(int *input,int num){
+	int min,i,j;
+	for(i=0;i<num-1;i++){
+		min=i;
+		for(int j=i+1;j<num;j++){
+			if(input[min]>input[j]){
+				min=j;
+			}
+		}
+		swap(&input[min],&input[i]);
+	}
+}

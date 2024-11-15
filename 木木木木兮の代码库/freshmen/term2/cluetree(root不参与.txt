@@ -1,0 +1,130 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h>
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define normal 1
+#define clue 0 
+typedef struct _node{
+	int input;
+	int lbit;
+	int rbit;
+	struct _node *left;
+	struct _node *right;
+}node;
+typedef struct _list{
+	node *root;
+}List;
+void add(List *list,int input){
+	node *p;
+	p=(node *)malloc(sizeof(node));
+	p->input=input;
+	p->left=NULL;
+	p->right=NULL;
+	p->lbit=clue;
+	p->rbit=clue;
+	node *pre;
+	pre=(node *)malloc(sizeof(node));
+	pre->input=input;
+	pre->lbit=clue;
+	pre->rbit=clue;
+	pre->left=NULL;
+	pre->right=NULL;
+	if(list->root==NULL){
+		list->root=p;
+		list->root->left=list->root;//point to self;normal
+		list->root->lbit=clue;
+		list->root->rbit=normal;
+		list->root->right=NULL;
+		return ; 	
+	}//root init
+	node *current;
+	current=list->root->right;
+	if(current==NULL){
+		list->root->right=p;
+		p->left=list->root;
+		p->right=list->root;//clue
+		return ; 
+	}//head init
+	node *parent;
+	parent=list->root;
+	int pos;//direction
+	pos=0;
+	while(current){
+		if(current->input>input){//left
+			if(pos!=-1){
+				pos=-1;
+				pre=parent;
+			}
+			parent=current;
+			if(current->lbit==normal){
+				current=current->left;
+			}
+			else{
+				current=NULL;
+			}
+		}
+		else{
+			if(pos!=1){
+				pos=1;
+				pre=parent;
+			}
+			parent=current;
+			if(current->rbit==normal){
+				current=current->right;
+			}
+			else{
+				current=NULL;
+			}
+		}
+	}
+		if(parent->input>input){
+			parent->lbit=normal;
+			parent->left=p;
+			p->left=pre;
+			p->right=parent;
+		}
+		else{
+			parent->rbit=normal;
+			parent->right=p;
+			p->left=parent;
+			p->right=pre;
+		}
+	return ;
+}
+void midprint(List *list){
+	node *circle;
+	circle=list->root;
+	do{
+		if(circle->rbit==clue){
+			circle=circle->right;
+		}
+		else{
+			circle=circle->right;
+			while(circle->lbit!=clue){
+				circle=circle->left;
+			}
+		}
+		if(circle!=list->root){
+			printf("%d ",circle->input);
+		}
+	}while(circle!=list->root);
+	printf("\n");
+}
+int main(){
+	List list;
+	list.root=NULL;
+	int input;
+	while(scanf("%d",&input)!=EOF){
+		add(&list,input);
+	}
+	midprint(&list);
+	return 0;
+}

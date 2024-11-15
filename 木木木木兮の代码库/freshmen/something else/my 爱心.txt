@@ -1,0 +1,29 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#include<malloc.h> 
+const double pi = acos(-1.0);
+int  main(){
+  float x,y,a;
+  char bottle[5]={'L','o','v','e',};
+  int i=0;
+  for(y=1.3f;y>-1.1f;y-=0.06f){ 
+        for(x=-1.2f;x<=1.2f;x+=0.025f){
+            a=x*x+y*y-1;
+            if(i>4){
+            	i%=5;
+			}
+            putchar(a*a*a-x*x*y*y*y<=0.0f?' ':bottle[i++]);
+        }
+        putchar('\n');
+        } 
+        return 0;
+}

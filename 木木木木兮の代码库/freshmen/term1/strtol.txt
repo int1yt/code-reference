@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    char str[] = "12345";
+    char *endptr;
+    long int num;
+
+    num = strtol(str, &endptr, 10);
+
+    if (*endptr != '\0') {
+        printf("转换失败：输入字符串不是一个有效的整数。\n");
+    } else {
+        printf("转换结果：%ld\n", num);
+    }
+
+    return 0;
+}//样例

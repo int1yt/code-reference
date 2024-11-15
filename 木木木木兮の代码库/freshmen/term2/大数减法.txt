@@ -1,0 +1,107 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+int final[100];
+char a[100];
+char b[100];
+int a0[100];
+int b0[100];
+void change(int lengtha,int lengthb,int input){
+	int i;
+	if(input>0){
+	for(i=0;i<lengtha;i++){
+		a0[i]=(int)a[i]-(int)'0';
+	}
+	for(i=0;i<lengtha;i++){
+		b0[i]=(int)b[i]-(int)'0';
+	}
+	}
+	else{
+		for(i=0;i<lengthb;i++){
+		a0[i]=(int)b[i]-(int)'0';
+	}
+	for(i=0;i<lengtha;i++){
+		b0[i]=(int)a[i]-(int)'0';
+	}
+	}
+}
+ 
+void work(int lengtha,int lengthb){
+     int i=0;
+        for(i=0;i<lengthb;i++){
+            if(a0[lengtha-1-i]>=b0[lengthb-1-i]){
+                final[i]=(a0[lengtha-1-i]-b0[lengthb-1-i]);
+            }
+            else{
+                final[i]=(10+a0[lengtha-1-i]-b0[lengthb-1-i]);
+                a0[lengtha-2-i]--;
+            }
+        }
+
+        for(i=lengthb;i<lengtha;i++){
+        	if(a0[lengtha-1-i]<0){
+        		final[i]=10+a0[lengtha-1-i];
+        		a0[lengtha-2-i]--;
+			}
+			else{
+            final[i]=(int)(a0[lengtha-1-i]);
+        }
+        }
+}
+void print(int length){
+    int i;
+    int end;
+    int j;
+    for(j=length-1;j>=0;j--){
+		end=j;
+    	if(final[j]==0){
+    		continue;
+		}
+		else{
+			break;
+		}
+	}
+    for(i=end;i>=0;i--){
+        printf("%d",final[i]);
+    }
+}
+int main(){
+    scanf("%s\n%s",a,b);
+    int lengtha = strlen(a);    
+    int lengthb = strlen(b);
+    int flag=0;
+    if(lengtha<lengthb){
+        flag=1;
+    }
+    else if(lengtha==lengthb){
+        if(strcmp(a,b)<0){
+            flag=1;
+        }
+    }
+    if(flag==1){
+    	change(lengtha,lengthb,-1);
+	}
+	else{
+		    change(lengtha,lengthb,1);
+	}
+    if(flag==0){//a>b
+        work(lengtha,lengthb);
+        print(lengtha);
+    }
+    else{
+        work(lengthb,lengtha);
+        printf("-");
+        print(lengthb);
+    }
+    return 0;
+}

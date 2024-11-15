@@ -1,0 +1,5 @@
+ll int week(int year,int month,int day){
+	ll int w;
+	w=((year-1)*365+(year-1)/4-(year-1)/100+(year-1)/400+day)%7;
+	return w;
+}

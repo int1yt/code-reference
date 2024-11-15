@@ -1,0 +1,51 @@
+#include"stdio.h"
+ 
+void merge(int *array, int left, int right, int middle) { //起始数组，数组的起始位置，数组的终止位置，中间的位置（左边数组的终止位置）
+    int ans[right - left + 1]; //答案数组，长度和起始数组一致
+    int i = left; //i是我们图片里的那个i
+    int j = middle + 1; //j是我们图片里的那个j
+    int start = 0; //ans数组的起点
+    while (i <= middle && j <= right) {
+        ans[start++] = array[i] <= array[j] ? array[i++] : array[j++];
+        //核心代码，归并过程，注意，如果左右相等，优先排左边
+    } //这时候至少有一边已经全部排到答案数组里面了，否则循环不会结束
+    while (i <= middle) {
+        ans[start++] = array[i++];
+    }
+    while (j <= right) {
+        ans[start++] = array[j++];
+    }
+    //这两个while是把剩下那个没排完的数组排到ans里面，由于数组内部已经是有序的了，直接复制过去就行
+    for (start = 0; start < right - left + 1; start++) {
+        array[left + start] = ans[start]; //复制回去，排序完成
+    }
+}
+void merge_sort(int *array, int left, int right) {
+    if (left == right) {
+        return;
+    } //长度只有1，结束从上往下分解数组的过程，开始执行从下往上merge的过程
+    int middle = left + ((right - left) >> 1); 
+    //取中点，右移1位相当于除以2，且比除以2快
+    merge_sort(array, left, middle);
+    merge_sort(array, middle + 1, right);
+    //二分法，将数组一分为二，递归地继续分割
+    merge(array, left, right, middle);
+    //长度为1的时候触发left==right的条件，不再进行merge_sort，相应的，把之前merge_sort没有来得及执行的merge函数执行一遍，排序完毕
+}
+ 
+int main(){
+	int arr[100]={0};
+	int i=0;
+	while(1){
+		scanf("%d",&arr[i]);
+		i++;
+		if(getchar()=='\n'){
+			break;
+		}
+	}
+	merge_sort(arr,0,i);
+	while(i){
+		printf("%d ",arr[i]);
+		i--;
+	} 
+}

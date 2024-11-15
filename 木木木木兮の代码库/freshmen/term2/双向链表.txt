@@ -1,0 +1,111 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+typedef struct _node{
+    int value;
+    struct _node *next;
+    struct _node *prev;
+}node;
+typedef struct _list{
+    node *head;
+    node *tail;
+}List;
+void add(int value,List *plist){//add at the end
+    node *p=(node*)malloc(sizeof(node));
+    p->value = value;
+    p->next=NULL;
+    p->prev=NULL; 
+    if(plist->head){
+        (plist->tail)->next=p;
+        p->prev=plist->tail;
+        plist->tail=p;
+    }
+    else{
+        plist->head=p;
+        plist->tail=p;
+    }
+}
+void wholeprint(List *list){
+    node *p;
+    for(p=list->head;p;p=p->next){
+        printf("%d ",p->value);
+    }
+}//used to debug
+void valuedelete(List *list,int value){//index==value
+    node *p;
+    int flag=0;
+    for(p=list->head;p;p=p->next){
+        if(p->value==value){
+        	flag=1;
+        	if(p==list->head){
+        		list->head=p->next;
+        		p->next->prev=NULL;
+        		free(p);
+			}
+			else if(p==list->tail){
+				list->tail=p->prev;
+				p->prev->next=NULL;
+				free(p);
+			}
+			else{
+				(p->next)->prev=p->prev;
+				(p->prev)->next=p->next;
+				free(p);
+			}
+			break;
+		}
+    }
+    if(flag==0){
+    	printf("not found\n");
+	}
+}
+void freeloop(List *list){
+    node *p;
+    node *q;
+    for(p=list->head;p;p=q){
+        q=p->next;
+        free(p);
+    }
+}
+node *search(List *list,int index){
+	node *p;
+	for(p=list->head;p;p=p->next){
+		if(p->value==index){
+			return p;
+		}
+	}
+	return NULL;
+}
+void link(List *list1,List *list2){
+    list1->tail->next=list2->head;
+    list2->head->prev=list1->tail; 
+}//link two(seldom used
+int main(){
+	List list;
+	list.head=NULL;
+	list.tail=NULL;
+	/*-----------test-----------*/
+	int input;
+	while(scanf("%d",&input)!=EOF){
+		add(input,&list);
+	}
+	wholeprint(&list);
+	printf("\n");
+	int del;
+	while(scanf("%d",&del)!=EOF){
+		valuedelete(&list,del);
+		wholeprint(&list);
+	}
+	freeloop(&list);
+	return 0;
+}

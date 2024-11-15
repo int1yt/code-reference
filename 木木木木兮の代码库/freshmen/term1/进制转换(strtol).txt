@@ -1,0 +1,9 @@
+int main(){
+    char *endptr;
+    char input[20];
+    gets(input);
+    long int num;
+    num=strtol(input, &endptr, 2	);
+    printf("%ld",num);
+    return 0;
+}

@@ -1,0 +1,9 @@
+int findmax(int input[],int length){
+	int base=input[0];
+	for(int i=1;i<length;i++){
+		if(input[i]>base){
+			base=input[i];
+		}
+	}
+	return base;
+}

@@ -1,0 +1,194 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h>
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+typedef struct _tree{
+    int data;
+    int lbit;
+    int rbit;
+    struct _tree *left;
+    struct _tree *right;
+    struct _tree *father;
+}Tree;
+typedef struct _seed{
+    Tree *root;
+}Seed;
+Tree *pre=NULL;
+void change_to_clue(Tree *root){
+    change_to_clue(root->left);
+    if(root->left==NULL){
+        root->lbit=1;
+        root->left=pre;
+    }
+    change_to_clue(root->right);
+
+}
+void plant(Seed *seed,int input){
+    Tree *p;
+    p=(Tree *)malloc(sizeof(Tree));
+    p->left=NULL;
+    p->right=NULL;
+    p->data=input;
+    p->lbit=0;
+    p->rbit=0;
+    p->father=NULL;
+    Tree *circle;
+    Tree *backup;
+    if(seed->root==NULL){
+        seed->root=p;
+
+    }
+    else{
+        for(circle=seed->root;circle;){
+            backup=circle;
+            if(circle->data>input){
+                circle=circle->left;
+            }
+            else{
+                circle=circle->right;
+            }
+        }
+        if(backup->data>input){
+            backup->left=p;
+            p->father=backup;
+        }
+        else{
+            backup->right=p;
+            p->father=backup;
+        }
+    }
+}
+void midprint(Tree *root)
+{
+    if(root){
+        midprint(root->left);
+        printf("%d ",root->data);
+        midprint(root->right);
+    }
+}//meawhile it ranges all data
+void endprint(Tree *root){
+    if(root){
+        endprint(root->left);
+        endprint(root->right);
+        printf("%d ",root->data);
+    }
+}
+void headprint(Tree *root){
+    if(root){
+        printf("%d ",root->data);
+        headprint(root->left);
+        headprint(root->right);
+    }
+}
+Tree *search(Seed *seed,int input){
+	Tree *p;
+	p=seed->root; 
+	while(p){
+		if(p->data>input){
+			p=p->left;
+		}
+		else if(p->data<input){
+			p=p->right;
+		}
+		else {
+			return p;
+		}
+	}
+	return NULL;
+}
+void insert(Seed *seed,int input){
+	Tree *p;
+	p=search(seed,input);
+	if(p!=NULL){
+		printf("exist\n");
+	}
+	else{
+		plant(seed,input);
+	}
+}
+void cut(Seed *seed,int input){
+	Tree *p;
+	p=search(seed,input);
+	if(p==NULL){
+		printf("error");
+	}
+	else{
+        Tree *backup=p->father;
+		if(p->left==NULL&&p->right==NULL){
+            if(backup->left->data==input){
+                backup->left=NULL;
+            }
+            else{
+                backup->right=NULL;
+            }
+            free(p);
+		}
+        else if(p->left==NULL&&p->right!=NULL){
+            if(backup->right->data==input){
+                backup->right=p->right;
+            }
+            else{
+                backup->left=p->right;
+            }
+            free(p);
+        }
+        else if(p->left!=NULL&&p->right==NULL){
+            if(backup->right->data==input){
+                backup->right=p->left;
+            }
+            else{
+                backup->left=p->left;
+            }
+            free(p);
+        }
+        else{
+            Tree *circle;
+            circle=p;
+            while(circle->right==NULL){
+                circle=circle->left;
+            }
+            circle=circle->right;
+            while(circle->left){
+                circle=circle->left;
+            }
+            if(backup->left->data==input){
+                backup->left=circle;
+                circle->father=backup;
+            }
+            else{
+                backup->right=circle;
+                circle->father=backup;
+            }                
+            circle->left=p->left;
+            circle->right=p->right;
+            free(p);
+        }
+	}
+}
+int main(){
+    Seed seed;
+    seed.root=NULL;
+    int input;
+    while(scanf("%d",&input)!=EOF){
+        plant(&seed,input);
+    }
+    int del;
+    scanf("%d",&del);
+    insert(&seed,8);
+    cut(&seed,del);
+    midprint(seed.root);
+    printf("\n");
+    headprint(seed.root);
+    printf("\n");
+    endprint(seed.root);
+    return 0;
+}

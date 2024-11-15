@@ -1,0 +1,112 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+const double pi = acos(-1.0);
+typedef struct _node{
+    int value;
+    struct _node *next;
+}node;
+typedef struct _list{
+    node *head;
+    node *tail;
+}List;
+void add(int value,List *plist){
+    node *p=(node*)malloc(sizeof(node));
+    p->value = value;
+    p->next=NULL;
+    if(plist->head!=NULL){
+        (plist->tail)->next=p;
+        plist->tail=p;
+    }
+    else{
+        plist->head=p;
+        plist->tail=p;
+    }
+}
+void wholeprint(List *list){
+    node *p;
+    for(p=list->head;p;p=p->next){
+        printf("%d ",p->value);
+    }
+}
+void valuedelete(List *list,int value){
+    node *p;
+    node *bottle=NULL;
+    for(p=list->head;p;p=p->next){
+        if(p->value==value){
+        	if(bottle){
+            bottle->next=p->next;
+        }
+        else{
+        	list->head=p->next;
+		}
+            free(p);
+            break;
+        }
+        else{
+            bottle=p;
+        }
+    }
+}
+void freeloop(List *list){
+    node *p;
+    node *q;
+    for(p=list->head;p;p=q){
+        q=p->next;
+        free(p);
+    }
+}
+void addnew(List *list,int value){
+    node *p;
+    node *bottle;
+    for(p=list->head;p;p=p->next){
+        if(p->value==value){
+            node *add;
+            add->value=value;
+            add->next=p->next;
+            p->next=add;
+            break;
+        }
+    }
+}
+void loopreverse(List *list){
+   node *p=(list->head);
+   node *q=NULL;
+   node *r=NULL;
+   while(p){
+    r=q;
+    q=p;
+    p=p->next;
+    q->next=r;
+   }
+   list->head=q; 
+}
+void link(List *list1,List *list2){
+    list1->tail->next=list2->head;
+}
+int main(){
+	List list;
+    list.head=NULL;
+    list.tail=NULL;
+    int input;
+    do{
+        scanf("%d",&input);
+        if(input!=-1){
+        add(input,&list);
+        }
+    }while(input!=-1);
+	loopreverse(&list);
+    wholeprint(&list);
+    freeloop(&list);
+    return 0;
+}

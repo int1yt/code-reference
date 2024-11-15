@@ -1,0 +1,257 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h>
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+#define NHASH  3001
+#define MULT  37
+char dic[10000][30];
+int init(){
+	FILE *fp;
+	fp=NULL;
+	fp =fopen ("dictionary3000.txt","r");
+	if(fp==NULL){
+		printf("error\n");
+	}
+	int cnt=0;
+	char get;
+	get=fgetc(fp);
+	while(get!=EOF){
+		if(get>='a'&&get<='z'){
+			int num=0;
+			while((get>='a'&&get<='z')){
+				dic[cnt][num++]=get;
+				get=fgetc(fp);
+			}
+			dic[cnt][num++]='\0';
+			cnt++;	
+		}
+		get=fgetc(fp);
+	}
+	return cnt;
+}
+void find1(char *input,int num){
+	int cnt=0;
+	int circle=0;
+	int flag=1;
+	if(!(input[0]>='a'&&input[0]<='z')){
+		printf("0 %d",cnt);
+		return ;
+	}
+	while(strcmp(input,dic[circle])!=0){
+		cnt++;
+		if(strcmp(input,dic[circle])<0){
+			flag=0;
+			break;
+		}
+		if(cnt>=num){
+			flag=0;
+			break;
+		}
+		circle++;
+	}
+	if(flag==1){
+		printf("1 %d\n",cnt+1);
+	}
+	else{
+		printf("0 %d\n",cnt);
+	}
+}
+void find2(char *input,int begin,int end,int cnt){
+	cnt++;
+	if(end<=begin){
+		if(strcmp(input,dic[end])==0){
+			printf("1 %d\n",cnt);
+			}
+		else{
+				printf("0 %d\n",cnt);	
+			}
+		return ;
+	}
+	int mid;
+	mid=(begin+end)/2;
+	if(strcmp(input,dic[mid])==0){
+		printf("1 %d\n",cnt);
+		return ;
+	}
+	else if(strcmp(input,dic[mid])>0){
+		find2(input,mid+1,end,cnt);
+	}
+	else{
+		find2(input,begin,mid-1,cnt);
+	}
+}
+void wholeprint(int length){
+	int i=0;
+	for(i=0;i<length;i++){
+		printf("%s\n",dic[i]);
+	}
+}
+int  bloc[30];
+int find(int i){
+	int rec=0;
+	while(1){
+		if(dic[i][rec]>='a'&&dic[i][rec]<='z'){
+			return rec;
+		}
+		else{
+			rec++;
+		}
+	}
+}
+void blocinit(int length){
+	int cnt=1;
+	int i=0;
+	for(i=1;i<length;i++){
+		if(dic[i][0]==dic[i-1][0]){
+			cnt++;
+		}
+		else{
+			bloc[dic[i-1][0]-'a']=cnt;
+			cnt=1;
+		}
+	}
+	bloc[dic[i-1][0]-'a']=cnt;
+//	int k=0;
+//	for(k=0;k<26;k++){
+//		printf("%d\n",bloc[k]);
+//	}
+}
+void find3(char *input,int length){
+	blocinit(length);
+	char head;
+	head=input[0];
+	int num;
+	num=(int)(head-'a');
+	//printf("%d\n",bloc[num]);
+	int i=0;
+	int begin=0;
+	for(i=0;i<num;i++){
+		begin+=bloc[i];
+	}
+	find2(input,begin,begin+bloc[num]-1,0);
+}
+unsigned int hash(char *str)
+{
+       unsigned int h=0;
+       char *p;
+       for(p=str; *p!='\0'; p++)
+              h = MULT*h + *p;
+       return h % NHASH;
+}
+typedef struct _node{
+	char input[100];
+	struct _node *next;
+	struct _node *prev;
+}node;
+node *hashsave[NHASH];
+void hashinit(int length){
+	int k=0;
+	for(k=0;k<NHASH;k++){
+		hashsave[k]=NULL;
+	}
+	int i=0;
+	for(i=0;i<length;i++){
+		node *p;
+		p=(node *)malloc(sizeof(node));
+		p->next=NULL;
+		p->prev=NULL;
+		strcpy(p->input,dic[i]);
+		unsigned int loc;
+		loc=hash(dic[i]);
+		if(hashsave[loc]==NULL){
+			hashsave[loc]=p;
+		}
+		else{
+			if(strcmp(hashsave[loc]->input,p->input)>0){
+				p->next=hashsave[loc];
+				hashsave[loc]->prev=p;
+				hashsave[loc]=p;
+			}
+			else{
+				node *ser;
+				ser=NULL;
+				int flag=0;
+				for(ser=hashsave[loc];ser&&ser->next;ser=ser->next){
+					if(strcmp(ser->input,p->input)>0){
+						flag=1;
+						break;
+					}
+				}
+				if(flag==1){
+					node *recc;
+					recc=ser->prev;
+					recc->next=p;
+					p->prev=recc;
+					p->next=ser;
+					ser->prev=p;
+				}
+				else{
+					ser->next=p;
+					p->prev=ser;
+				}
+			}
+		}
+	}
+}
+void check(){
+	int i=0;
+	for(i=0;i<NHASH;i++){
+		node *p;
+		p=hashsave[i];
+		for(p;p;p=p->next){
+			printf("%s\n",p->input);
+		}
+	}
+}
+void find4(char *input,int length){
+	hashinit(length);
+	int cnt=0;
+	int num=hash(input);
+	node *p;
+	p=hashsave[num];
+	for(p=hashsave[num];p;p=p->next){
+		cnt++;
+		if(strcmp(p->input,input)==0){
+			printf("1 %d",cnt);
+			return ;
+		}
+		else if(strcmp(p->input,input)>0){
+			printf("0 %d",cnt);
+			return ;			
+		}
+	}
+	printf("0 %d",cnt);
+	return ;
+}
+int main(){
+	char input[30];
+	scanf("%s",input);
+	int length;
+	length=init();
+	//printf("%d\n",length);
+	//wholeprint(length);
+	int n;	
+	scanf("%d",&n);
+	if(n==1){
+			find1(input,length);
+	}
+	else if(n==2){
+		find2(input,0,length-1,0);	
+	}
+	else if(n==3){
+			find3(input,length-1);
+	}
+	else{
+			find4(input,length);
+	}
+	return 0;
+}

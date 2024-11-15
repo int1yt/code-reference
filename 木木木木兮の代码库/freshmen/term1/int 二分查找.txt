@@ -1,0 +1,15 @@
+int findx(int *input,int length,int x,int a,int b){
+    int mid=(a+b)/2;
+    if(mid==a){
+    	return -1;
+	}
+	if(input[mid]==x){
+        return mid;
+    }
+    else if(input[mid]>x){
+        return findx(input,length,x,a,mid);
+    }
+    else if(input[mid]<x){
+        return findx(input,length,x,mid,b);
+    }
+}

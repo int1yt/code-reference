@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+void change(int input, int *output)
+{
+    int cnt = 0;
+    input--;
+    while (input % 2 == 0)
+    {
+        cnt++;
+        input = input / 2;
+    }
+    output[0] = cnt;
+    output[1] = input;
+}
+
+int main()
+{
+    int input;
+    scanf("%d", &input);
+    int rec[2];
+    change(input, rec);
+    printf("%d %d\n", rec[0], rec[1]);
+    return 0;
+}

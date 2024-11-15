@@ -1,0 +1,5 @@
+int m=1;
+int plusplus(int a){
+	m*=a;
+	return a==1? m:plusplus(a-1);
+};

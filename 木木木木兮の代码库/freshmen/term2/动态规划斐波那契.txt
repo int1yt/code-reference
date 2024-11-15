@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20
+#define MAXSTACK 1000
+const double pi = acos(-1.0);
+int result[1000]={0};
+int fib(int n){
+    int out;
+    out=result[n];
+    if(out==0){
+    	if(n==0){
+    		return 0;
+		}
+		else if(n==1){
+			return 1;
+		}
+		else{
+			return fib(n-1)+fib(n-2);
+		}
+	}
+    result[n]=out;
+    return out;
+}
+int  main(){
+    int input;
+    while(scanf("%d",&input)!=EOF){
+        printf("%d\n",fib(input));
+    }
+    return 0;
+}

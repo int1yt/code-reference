@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <math.h>
+#define ll long long
+int cal_square(ll input)
+{
+    int rec = 0;
+    while (input > 0)
+    {
+        input = input / 10;
+        rec++;
+    }
+    return rec;
+}
+ll powl(int n, int k)
+{
+    ll final = 1;
+    if (k <= 0)
+    {
+        return 1;
+    }
+    for (int i = 0; i < k; i++)
+    {
+        final *= n;
+    }
+    return final;
+}
+ll multipy(ll a, ll b)
+{
+    if (a < 10 || b < 10)
+    {
+        return a * b;
+    }
+    int lengtha = cal_square(a);
+    int lengthb = cal_square(b);
+    int n = (lengtha > lengthb ? lengtha : lengthb);
+    int m = n / 2;
+    ll higha = a / powl(10, m);
+    ll lowa = a % powl(10, m);
+    ll highb = b / powl(10, m);
+    ll lowb = b % powl(10, m);
+
+    ll rec1 = multipy(higha, highb);
+    ll rec2 = multipy(lowa, lowb);
+    ll rec3 = multipy(higha + lowa, highb + lowb);
+
+    return rec1 * powl(10, 2 * m) + (rec3 - rec2 - rec1) * powl(10, m) + rec2;
+}
+int main()
+{
+    ll a, b;
+    scanf("%lld%lld", &a, &b);
+    printf("%lld\n", multipy(a, b));
+    return 0;
+}

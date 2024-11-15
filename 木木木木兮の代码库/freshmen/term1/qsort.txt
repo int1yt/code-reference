@@ -1,0 +1,13 @@
+int cmpfunc(const void *a,const void *b){
+    return (*(int *)a-*(int *)b);//升序，改变正负即改变顺序 
+}
+int main(){
+    int input[10];
+    for(int i=0;i<10;i++){
+        scanf("%d",&input[i]);
+    }
+    qsort(input,10,sizeof(int),cmpfunc);
+    for(int i=0;i<10;i++){
+        printf("%d",input[i]);
+    }
+    return 0;

@@ -1,0 +1,61 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20
+const double pi = acos(-1.0);
+typedef struct {
+    int *array;//create 数组
+    int init_size; 
+}Array;
+Array array_create(int init_size){
+    Array a;
+    a.init_size = init_size;
+    a.array =(int*) malloc((a.init_size)*sizeof(int));
+    return a;
+}
+void array_destroy(Array *a){
+    free(a->array);
+    a->init_size=0;
+}
+int array_size(Array *a){
+    return a->init_size;
+}
+void array_grow(Array *a,int more_size){
+    int *p=(int*)malloc(sizeof(int)*(a->init_size+more_size));
+    for(int i=0;i<a->init_size;i++){
+        p[i]=a->array[i];//->use memcpy to replace
+    }
+    free(a->array);
+    a->array=p;
+    a->init_size+=more_size;
+}
+int * array_at(int index,Array *a){
+    if(index>a->init_size){
+        array_grow(a,((index-a->init_size)/BLOCK_SIZE+1)*BLOCK_SIZE);
+        return &(a->array[index]);
+    }
+    else{
+        return &(a->array[index]);//at function include array grow
+    }
+}
+int main(){
+    Array input;
+    int length;
+    input=array_create(length);
+    int n;
+    int num=0;
+	while(scanf("%d %d",&n,&num)!=EOF){
+		*array_at(num,&input)=n;
+		printf("%d",*array_at(num,&input));
+	}
+    return 0;
+}

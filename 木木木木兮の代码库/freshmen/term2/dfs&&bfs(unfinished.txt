@@ -1,0 +1,239 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h>
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+typedef struct _node{
+	int value;
+	int rec;//遍历统计 
+	struct _node *next;
+}node;
+typedef struct _list{
+	node *head[100];
+}List;
+void clear(List *list){
+	int i=0;
+	for(i=0;i<100;i++){
+		list->head[i]=NULL;
+		}
+}
+void add(int begin,int end,List *list){
+	node *p;
+	p=(node *)malloc(sizeof(node));
+	p->next=NULL;
+	p->value=end;
+	p->rec=0;
+	if(list->head[begin]==NULL){
+		node *q;
+		q=(node *)malloc(sizeof(node));
+		q->next=p;
+		q->value=begin;
+		p->rec=0;
+		list->head[begin]=q;
+	}
+	else{
+		node *circle;
+		for(circle=list->head[begin];circle;circle=circle->next){
+			if(circle->next==NULL){
+				break;
+			}
+		}
+		circle->next=p;
+	}
+}
+void wholeprint(List *list){
+	int i=0;
+	for(i=0;i<100;i++){
+		if(list->head[i]!=NULL){
+			node *p;
+			for(p=list->head[i];p;p=p->next){
+				printf("%d ",p->value);
+			}
+			printf("\n");
+		}
+	}
+}
+void init(List *list){
+	int begin,end;
+	while(scanf("%d %d\n",&begin,&end)!=EOF){
+		add(begin,end,list);
+		add(end,begin,list);
+	}
+}
+/*------------------bfs-----------------*/
+typedef struct _line{
+	node *input;
+	struct _line *next;
+	struct _line *prev;
+}Line;
+typedef struct _listline{
+	Line *head;
+	Line *tail;
+}Listline;
+void wholeprinttest(Listline *list){
+	Line *p;
+	for(p=list->head;p;p=p->next){
+		printf("%d ",p->input->value);
+	}
+	printf("\n");
+}
+void push(Listline *list,node *input){
+	Line *p;
+	p=(Line *)malloc(sizeof(Line));
+	p->input=input;
+	p->next=NULL;
+	p->prev=NULL;
+	if(list->head==NULL){
+		list->head=p;
+		list->tail=p;
+	}
+	else{
+		list->tail->next=p;
+		p->prev=list->tail;
+		list->tail=p;
+	}
+}
+node *pop(Listline *list){
+	node *output;
+	if(list->head==NULL){
+		return NULL;
+	}
+	output=list->head->input;
+	if(list->head==list->tail){
+		//list->head->input->rec=1;
+		//free(list->head);
+		list->head=NULL;
+		list->tail=NULL;
+	}
+	else{
+		//list->head->input->rec=1;
+		list->head=list->head->next;
+		//free(list->head->prev);
+		list->head->prev=NULL;
+	}
+	return output;
+}
+void bfs(node *input){//version of print 
+	Listline list;
+	list.head=NULL;
+	list.tail=NULL;
+	printf("\n");
+	printf("%d ",input->value);
+	input->rec=1;
+	input=input->next;
+	while(input){
+		if(input->rec==0){
+			push(&list,input);	
+		}
+		input=input->next;
+		pop(&list);
+	}
+	wholeprinttest(&list);
+	while(list.head){
+		node *p;
+		p=pop(&list);
+		if(p->rec==0){
+			p->rec=1;
+			printf("%d ",p->value);
+		}
+		//p=p->next;
+		while(p){
+			if(p->rec==0){
+				push(&list,p);	
+			}
+			p=p->next;
+		}
+		wholeprinttest(&list);
+	}
+	printf("\n");
+}
+/*---------------------bfs end------------------*/
+/*---------------------dfs----------------------*/
+typedef struct _stack{
+	node *input;
+	struct _stack *next;
+	struct _stack *prev;
+}Stack;
+typedef struct _liststack{
+	Stack *head;
+	Stack *tail;
+}Liststack;
+void stackpush(Liststack *list,node *input){
+	Stack *p;
+	p=(Stack*)malloc(sizeof(Stack));
+	p->next=NULL;
+	p->prev=NULL;
+	p->input=input;
+	if(list->head==NULL){
+		list->head=p;
+		list->tail=p;
+	} 
+	else{
+		list->tail->next=p;
+		p->prev=list->tail;
+		list->tail=p; 
+	}
+}
+node *stackpop(Liststack *list){
+	node *output;
+	if(list->head==NULL){
+		return NULL;
+	}
+	output=list->tail->input;
+	if(list->head==list->tail){
+		free(list->tail);
+		list->head=NULL;
+		list->tail=NULL;
+	}
+	else{
+		list->tail=list->tail->prev;
+		free(list->tail->prev);
+		list->tail->next=NULL; 
+	}
+	return output;
+}
+void dfs(node *input){
+	Liststack list;
+	list.head=NULL;
+	list.tail=NULL;
+	while(input){
+		if(input->rec==0){
+			stackpush(&list,input);
+		}
+		input=input->next;
+	}
+	while(list.head){
+	node *out;
+	out=stackpop(&list);
+	if(out->rec==0){
+		out->rec=1;
+		printf("%d ",out->value);
+	}
+	out=out->next;
+	while(out){
+		if(out->rec==0){
+			stackpush(&list,out);
+		}
+		out=out->next;
+	}
+}
+}
+/*-----------------------dfs end-------------------*/
+int main(){
+	List list;
+	clear(&list);
+	init(&list);
+	wholeprint(&list);
+	int num;
+	scanf("%d",&num);
+	bfs(list.head[num]);
+	return 0;
+}

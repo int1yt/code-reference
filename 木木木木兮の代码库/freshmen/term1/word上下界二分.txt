@@ -1,0 +1,47 @@
+int lowerfind(int *input,int  length,int x,int a,int b){
+	int mid=(a+b)/2;
+	if(a>b){
+	return a;
+	}
+	if(input[mid]==x&&input[mid-1]!=x){
+		return mid;
+	}
+	else if(input[mid]==x){
+		return lowerfind(input,length,x,a,mid-1);
+	}
+	else{
+		
+		return lowerfind(input,length,x,mid+1,b);
+		
+		}
+}
+int upfind(int *input,int length,int x,int a,int b){
+	if(a>b){
+		return a;
+	}
+	int mid=(a+b)/2;
+	if(input[mid]==x&&input[mid+1]!=x){
+		return mid;
+	}
+	else if(input[mid]==x){
+		return upfind(input,length,x,mid+1,b);
+	}
+	else{
+		return upfind(input,x,a,mid-1);
+	}
+}
+int find(int *input,int length,int x,int a,int b){
+	int mid=(a+b)/2;
+	if(a>b){
+		return -1;
+	}
+	if(input[mid]==x){
+		return mid;
+	}
+	else if(input[mid]>x){
+		return find(input,length,x,a,mid-1);
+	}
+	else{
+		return find(input,length,x,mid+1,b);
+	}
+}

@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20;
+const double pi = acos(-1.0);
+typedef struct _node{
+    int value;
+    struct _node *next;
+}node;
+typedef struct _list{
+    node *head;
+    node *tail;
+}List;
+void add(int value,List *plist){
+    node *p=(node*)malloc(sizeof(node));
+    p->value = value;
+    p->next=NULL;
+    if(plist->head!=NULL){
+        (plist->tail)->next=p;
+        plist->tail=p;
+    }
+    else{
+        plist->head=p;
+        plist->tail=p;
+    }
+}
+void wholeprint(List *list){
+    node *p;
+    for(p=list->head;p;p=p->next){
+        printf("%d ",p->value);
+    }
+}
+void valuedelete(List *list,int value){
+    node *p;
+    node *bottle;
+    for(p=list->head;p;p=p->next){
+        if(p->value==value){
+            bottle->next=p->next;
+            free(p);
+            break;
+        }
+        else{
+            bottle=p;
+        }
+    }
+}
+int main(){
+	List list;
+    list.head=NULL;
+    list.tail=NULL;
+    int input;
+    do{
+        scanf("%d",&input);
+        if(input!=-1){
+        add(input,&list);
+        }
+    }while(input!=-1);
+    int del;
+    scanf("%d",&del);
+    valuedelete(&list,del);
+    wholeprint(&list);
+    return 0;
+}

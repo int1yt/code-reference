@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+long long multi(int *input, int length, long long a, long long n, long long mod)
+{
+    long long rec;
+    rec = 1;
+    for (int i = 0; i < length; i++)
+    {
+        rec = rec * rec;
+        rec = rec % mod;
+        if (input[i] == 1)
+        {
+            rec *= a;
+            rec = rec % mod;
+        }
+        // printf("%lld\n", rec);
+    }
+    return rec;
+}
+int change(long long input, int *rec)
+{
+    int length = 0;
+    while (input > 0)
+    {
+        if (input % 2 == 0)
+        {
+            rec[length++] = 0;
+        }
+        else
+        {
+            rec[length++] = 1;
+        }
+        input = input / 2;
+    }
+    return length;
+}
+void swap(int *input, int length)
+{
+    int l = length / 2;
+    int bottle;
+    for (int i = 0; i < l; i++)
+    {
+        bottle = input[i];
+        input[i] = input[length - i - 1];
+        input[length - i - 1] = bottle;
+    }
+}
+void check(int *input, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        printf("%d ", input[i]);
+    }
+    printf("\n");
+}
+int main()
+{
+    long long a, n, mod;
+    int length;
+    while (scanf("%lld %lld %lld", &a, &n, &mod))
+    {
+        int input[100];
+        length = change(n, input);
+        // check(input, length);
+        // printf("%d\n", length);
+        swap(input, length);
+        // check(input, length);
+        printf("%lld\n", multi(input, length, a, n, mod));
+    }
+    return 0;
+}

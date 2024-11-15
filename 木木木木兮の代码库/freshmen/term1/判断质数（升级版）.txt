@@ -1,0 +1,17 @@
+int judge(int n){
+	int step=2;
+	if(n==2||n==3||n==5){
+		return 1;
+	}else if(n%2==0||n%3==0||n%5==0){
+		return 0;
+	}
+	else{
+		for(int i=7;i*i<=n;i+=step){
+			if(n%i==0){
+				return 0;
+			}
+			step=6-step;
+		}
+	}
+	return 1;
+}

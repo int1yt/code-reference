@@ -1,0 +1,78 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include<malloc.h> 
+#include<time.h>
+#define ll long long
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a<b?a:b
+#define eps 1e-10
+#define BLOCK_SIZE 20
+#define MAXSTACK 1000
+#define symbolnumber 10
+const double pi = acos(-1.0);
+typedef struct _node{
+    int value;
+    _node *next;
+}node;
+typedef struct _list{
+    node *front;
+    node *back;
+}List;
+void add_queue(int input,List *list){
+    node *p=(node *)malloc(sizeof(node));
+    p->next=NULL;
+    p->value=input;
+    if(list->front){
+        (list->back)->next=p;
+        list->back=p;
+    }
+    else{
+		list->front=p; 
+		list->back=p;
+    }
+}
+void deletefirst(List *list){
+	node *p;
+    p=(list->front)->next;
+    free(list->front);
+    list->front=p; 
+}
+void pop_queue(List *list){
+    int out;
+    out=list->front->value;
+    printf("%d ",out);
+    node *p;
+    p=(list->front)->next;
+    free(list->front);
+    list->front=p;
+}
+int isempty_queue(List *list){
+    if(list->front){
+        return 1;
+    }
+    else{
+        return -1;
+    }
+}
+int  main(){
+    int input;
+    List list;
+    list.front = NULL;
+    list.back = NULL;
+    do{
+        scanf("%d",&input);
+        if(input!=-1){
+            add_queue(input,&list);
+        }
+    }while(input!=-1);
+    deletefirst(&list);
+    deletefirst(&list);
+    deletefirst(&list);
+    while(isempty_queue(&list)){
+        pop_queue(&list);
+    }
+}
